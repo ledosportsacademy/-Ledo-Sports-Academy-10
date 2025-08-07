@@ -2322,8 +2322,17 @@ function togglePaymentStatus(memberId, paymentDate) {
   const feeRecord = appData.weeklyFees.find(function(f) { return f.memberId === memberId; });
   if (!feeRecord) return;
   
-  const payment = feeRecord.payments.find(function(p) { return p.date === paymentDate; });
-  if (!payment) return;
+  // Find the payment and its index
+  let paymentIndex = -1;
+  const payment = feeRecord.payments.find(function(p, index) { 
+    if (p.date === paymentDate) {
+      paymentIndex = index;
+      return true;
+    }
+    return false;
+  });
+  
+  if (!payment || paymentIndex === -1) return;
   
   // Cycle through statuses: pending -> paid -> overdue -> pending
   let newStatus;
@@ -2338,15 +2347,13 @@ function togglePaymentStatus(memberId, paymentDate) {
   // Show loading message
   showMessage('Updating payment status...', 'info');
   
-  // Prepare data for API
+  // Prepare data for API - backend expects status, not newStatus
   const updateData = {
-    memberId: memberId,
-    paymentDate: paymentDate,
-    newStatus: newStatus
+    status: newStatus
   };
   
-  // Update via API
-  fetch(`http://localhost:3000/api/weekly-fees/payment-status`, {
+  // Update via API - using the correct endpoint structure
+  fetch(`http://localhost:3000/api/weekly-fees/member/${memberId}/payment/${paymentIndex}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
