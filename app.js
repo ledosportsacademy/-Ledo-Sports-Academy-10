@@ -1,6 +1,5 @@
 // Application Data - Ledo Sports Academy
 let appData = {
-  gallery: [],
   heroSlides: [
     {
       id: 1,
@@ -462,7 +461,6 @@ let slideshowInterval = null;
 let currentSlideIndex = 0;
 let isCurrentlyOnHome = true;
 let isSlideshowPaused = false;
-let currentGalleryItem = null;
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -483,8 +481,7 @@ function initializeApp() {
     fetchData('donations'),
     fetchData('expenses'),
     fetchData('experiences'),
-    fetchData('weekly-fees'),
-    fetchData('gallery')
+    fetchData('weekly-fees')
   ])
   .then(() => {
     // Render all content after data is loaded
@@ -497,8 +494,6 @@ function initializeApp() {
     renderExpenses();
     renderExperiences();
     renderWeeklyFees();
-    renderGallery();
-    renderHeroSlidesAdmin();
     updateTotalDonations();
     updateTotalExpenses();
     renderRecentActivities();
@@ -524,8 +519,6 @@ function initializeApp() {
     renderExpenses();
     renderExperiences();
     renderWeeklyFees();
-    renderGallery();
-    renderHeroSlidesAdmin();
     updateTotalDonations();
     updateTotalExpenses();
     renderRecentActivities();
@@ -564,9 +557,6 @@ function fetchData(endpoint) {
           break;
         case 'weekly-fees':
           appData.weeklyFees = data;
-          break;
-        case 'gallery':
-          appData.gallery = data;
           break;
       }
       console.log(`Loaded ${endpoint} data:`, data);
@@ -688,14 +678,7 @@ function renderHeroSlideshow() {
     // Create slide
     const slideElement = document.createElement('div');
     slideElement.className = index === 0 ? 'slide active' : 'slide';
-    
-    // Fix image URL if it doesn't start with http:// or https:// or /
-    let backgroundImage = slide.backgroundImage;
-    if (backgroundImage && !backgroundImage.startsWith('http://') && !backgroundImage.startsWith('https://') && !backgroundImage.startsWith('/')) {
-      backgroundImage = '/' + backgroundImage;
-    }
-    
-    slideElement.style.backgroundImage = 'url("' + backgroundImage + '")';
+    slideElement.style.backgroundImage = 'url("' + slide.backgroundImage + '")';
     
     slideElement.innerHTML = 
       '<div class="slide-overlay">' +
@@ -1073,36 +1056,6 @@ function setupModalEventListeners() {
       e.preventDefault();
       saveExperience();
       if (experienceModal) experienceModal.classList.add('hidden');
-    });
-  }
-  
-  // Gallery modal
-  const addGalleryItemBtn = document.getElementById('addGalleryItemBtn');
-  const galleryModal = document.getElementById('galleryModal');
-  const cancelGalleryBtn = document.getElementById('cancelGalleryBtn');
-  const galleryForm = document.getElementById('galleryForm');
-
-  if (addGalleryItemBtn) {
-    addGalleryItemBtn.addEventListener('click', function() {
-      currentGalleryItem = null;
-      currentEditingType = 'gallery';
-      const modalTitle = document.getElementById('galleryModalTitle');
-      if (modalTitle) modalTitle.textContent = 'Add Photo';
-      if (galleryForm) galleryForm.reset();
-      if (galleryModal) galleryModal.classList.remove('hidden');
-    });
-  }
-
-  if (cancelGalleryBtn) {
-    cancelGalleryBtn.addEventListener('click', function() {
-      if (galleryModal) galleryModal.classList.add('hidden');
-    });
-  }
-
-  if (galleryForm) {
-    galleryForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      saveGalleryItem();
     });
   }
 
@@ -2468,327 +2421,7 @@ function togglePaymentStatus(memberId, paymentDate) {
   });
 }
 
-// Gallery Functions
-function renderGallery() {
-  const galleryGrid = document.getElementById('galleryGrid');
-  
-  if (!galleryGrid) return;
-  
-  galleryGrid.innerHTML = '';
-  
-  if (appData.gallery.length === 0) {
-    galleryGrid.innerHTML = '<div class="empty-state">No gallery items available</div>';
-    return;
-  }
-  
-  appData.gallery.forEach(function(item) {
-    const galleryItem = document.createElement('div');
-    galleryItem.className = 'gallery-item';
-    
-    galleryItem.innerHTML = `
-      <div class="gallery-image" style="background-image: url('${item.imageUrl}')"></div>
-      <div class="gallery-content">
-        <h4>${item.title}</h4>
-        <p>${item.description}</p>
-      </div>
-      ${isAdminMode ? `
-      <div class="gallery-actions">
-        <button class="btn btn--small btn--outline" onclick="editGalleryItem(${item.id})">Edit</button>
-        <button class="btn btn--small btn--danger" onclick="deleteGalleryItem(${item.id})">Delete</button>
-        <button class="btn btn--small ${item.showInHeroSlider ? 'btn--warning' : 'btn--primary'}" 
-          onclick="toggleGalleryItemHeroStatus(${item.id})">
-          ${item.showInHeroSlider ? 'Remove from Hero' : 'Add to Hero'}
-        </button>
-      </div>` : ''}
-    `;
-    
-    galleryGrid.appendChild(galleryItem);
-  });
-}
-
-function renderHeroSlidesAdmin() {
-  const heroSliderManagerGrid = document.getElementById('heroSliderManagerGrid');
-  
-  if (!heroSliderManagerGrid) return;
-  
-  heroSliderManagerGrid.innerHTML = '';
-  
-  if (appData.heroSlides.length === 0) {
-    heroSliderManagerGrid.innerHTML = '<div class="empty-state">No hero slides available</div>';
-    return;
-  }
-  
-  appData.heroSlides.forEach(function(slide) {
-    const slideItem = document.createElement('div');
-    slideItem.className = 'hero-slide-item';
-    
-    // Fix image URL if it doesn't start with http:// or https:// or /
-    let backgroundImage = slide.backgroundImage;
-    if (backgroundImage && !backgroundImage.startsWith('http://') && !backgroundImage.startsWith('https://') && !backgroundImage.startsWith('/')) {
-      backgroundImage = '/' + backgroundImage;
-    }
-    
-    slideItem.innerHTML = `
-      <div class="hero-slide-preview" style="background-image: url('${backgroundImage}')"></div>
-      <div class="hero-slide-content">
-        <h4>${slide.title}</h4>
-        <p>${slide.subtitle}</p>
-        <small>${slide.description}</small>
-        <div class="hero-slide-cta">
-          <span class="cta-label">${slide.ctaText}</span>
-          <span class="cta-link">${slide.ctaLink}</span>
-        </div>
-      </div>
-      <div class="hero-slide-actions admin-only">
-        <button class="btn btn--small btn--outline" onclick="editHeroSlide(${slide.id})">Edit</button>
-        <button class="btn btn--small btn--danger" onclick="deleteHeroSlide(${slide.id})">Delete</button>
-      </div>
-    `;
-    
-    heroSliderManagerGrid.appendChild(slideItem);
-  });
-}
-
-function saveGalleryItem() {
-  const title = document.getElementById('galleryTitle').value;
-  const description = document.getElementById('galleryDescription').value;
-  let imageUrl = document.getElementById('galleryImageUrl').value;
-  const showInHeroSlider = document.getElementById('galleryShowInHeroSlider').checked;
-  
-  // Fix image URL if it doesn't start with http:// or https:// or /
-  if (imageUrl && !imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('/')) {
-    imageUrl = '/' + imageUrl;
-  }
-
-  // Prepare data for API
-  const galleryData = { title, description, imageUrl, showInHeroSlider };
-  
-  // Show loading message
-  showMessage('Saving gallery item...', 'info');
-
-  if (currentGalleryItem) {
-    // Update existing gallery item
-    fetch(`http://localhost:3000/api/gallery/${currentGalleryItem}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(galleryData)
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to update gallery item');
-      }
-      return response.json();
-    })
-    .then(updatedItem => {
-      // Update local data
-      const index = appData.gallery.findIndex(function(item) { return item.id === currentGalleryItem; });
-      if (index !== -1) {
-        appData.gallery[index] = updatedItem;
-      }
-      
-      // Update UI
-      renderGallery();
-      if (showInHeroSlider) {
-        fetchHeroSlides();
-      }
-      showMessage('Gallery item updated successfully');
-    })
-    .catch(error => {
-      console.error('Error updating gallery item:', error);
-      showMessage('Failed to update gallery item: ' + error.message, 'error');
-    });
-  } else {
-    // Create new gallery item
-    fetch('http://localhost:3000/api/gallery', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(galleryData)
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to create gallery item');
-      }
-      return response.json();
-    })
-    .then(newItem => {
-      // Update local data
-      appData.gallery.push(newItem);
-      
-      // Update UI
-      renderGallery();
-      if (showInHeroSlider) {
-        fetchHeroSlides();
-      }
-      showMessage('Gallery item created successfully');
-    })
-    .catch(error => {
-      console.error('Error creating gallery item:', error);
-      showMessage('Failed to create gallery item: ' + error.message, 'error');
-    });
-  }
-
-  // Close modal
-  const galleryModal = document.getElementById('galleryModal');
-  if (galleryModal) galleryModal.classList.add('hidden');
-  
-  // Reset current item
-  currentGalleryItem = null;
-}
-
-function editGalleryItem(id) {
-  currentGalleryItem = id;
-  currentEditingType = 'gallery';
-  
-  const galleryItem = appData.gallery.find(function(item) { return item.id === id; });
-  
-  if (!galleryItem) {
-    showMessage('Gallery item not found', 'error');
-    return;
-  }
-  
-  const elements = {
-    modalTitle: document.getElementById('galleryModalTitle'),
-    title: document.getElementById('galleryTitle'),
-    description: document.getElementById('galleryDescription'),
-    imageUrl: document.getElementById('galleryImageUrl'),
-    showInHeroSlider: document.getElementById('galleryShowInHeroSlider'),
-    modal: document.getElementById('galleryModal')
-  };
-
-  if (elements.modalTitle) elements.modalTitle.textContent = 'Edit Gallery Item';
-  if (elements.title) elements.title.value = galleryItem.title;
-  if (elements.description) elements.description.value = galleryItem.description;
-  if (elements.imageUrl) elements.imageUrl.value = galleryItem.imageUrl;
-  if (elements.showInHeroSlider) elements.showInHeroSlider.checked = galleryItem.showInHeroSlider;
-  if (elements.modal) elements.modal.classList.remove('hidden');
-}
-
-function deleteGalleryItem(id) {
-  if (confirm('Are you sure you want to delete this gallery item?')) {
-    // Show loading message
-    showMessage('Deleting gallery item...', 'info');
-    
-    // Delete from API
-    fetch(`http://localhost:3000/api/gallery/${id}`, {
-      method: 'DELETE'
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to delete gallery item');
-      }
-      return response.json();
-    })
-    .then(() => {
-      // Check if the deleted item was in hero slider
-      const deletedItem = appData.gallery.find(item => item.id === id);
-      const wasInHeroSlider = deletedItem && deletedItem.showInHeroSlider;
-      
-      // Update local data
-      appData.gallery = appData.gallery.filter(function(item) { return item.id !== id; });
-      
-      // Update UI
-      renderGallery();
-      if (wasInHeroSlider) {
-        fetchHeroSlides();
-      }
-      showMessage('Gallery item deleted successfully');
-    })
-    .catch(error => {
-      console.error('Error deleting gallery item:', error);
-      showMessage('Failed to delete gallery item: ' + error.message, 'error');
-    });
-  }
-}
-
-function toggleGalleryItemHeroStatus(id) {
-  // Show loading message
-  showMessage('Updating hero slider status...', 'info');
-  
-  // Update via API
-  fetch(`http://localhost:3000/api/gallery/${id}/toggle-hero-slider`, {
-    method: 'PATCH'
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Failed to update hero slider status');
-    }
-    return response.json();
-  })
-  .then(updatedItem => {
-    // Update local data
-    const index = appData.gallery.findIndex(function(item) { return item.id === id; });
-    if (index !== -1) {
-      appData.gallery[index] = updatedItem;
-    }
-    
-    // Update UI
-    renderGallery();
-    fetchHeroSlides(); // Refresh hero slides
-    showMessage('Hero slider status updated successfully');
-  })
-  .catch(error => {
-    console.error('Error updating hero slider status:', error);
-    showMessage('Failed to update hero slider status: ' + error.message, 'error');
-  });
-}
-
-function editHeroSlide(id) {
-  // This function would be implemented if we want to directly edit hero slides
-  // For now, we're managing hero slides through the gallery
-  showMessage('Hero slides are managed through the gallery', 'info');
-}
-
-function deleteHeroSlide(id) {
-  if (confirm('Are you sure you want to delete this hero slide?')) {
-    // Show loading message
-    showMessage('Deleting hero slide...', 'info');
-    
-    // Delete from API
-    fetch(`http://localhost:3000/api/hero-slides/${id}`, {
-      method: 'DELETE'
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to delete hero slide');
-      }
-      return response.json();
-    })
-    .then(() => {
-      // Update UI by fetching latest hero slides
-      fetchHeroSlides();
-      showMessage('Hero slide deleted successfully');
-    })
-    .catch(error => {
-      console.error('Error deleting hero slide:', error);
-      showMessage('Failed to delete hero slide: ' + error.message, 'error');
-    });
-  }
-}
-
 // PDF Export Functions
-
-// Add these event listeners to your existing initialization code
-
-
-// Fetch hero slides function
-async function fetchHeroSlides() {
-  try {
-    const response = await fetch('/api/hero-slides');
-    if (!response.ok) throw new Error('Failed to fetch hero slides');
-    const data = await response.json();
-    appData.heroSlides = data;
-    
-    renderHeroSlideshow();
-    renderHeroSlidesAdmin();
-  } catch (error) {
-    console.error('Error fetching hero slides:', error);
-  }
-}
-
 function exportToPDF(type) {
   if (!window.html2pdf) {
     showMessage('PDF export library not loaded. Please refresh the page.', 'error');

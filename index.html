@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ledo Sports Academy - Management System</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="gallery.css">
-    <link rel="stylesheet" href="hero-slider.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="icon" type="image/png" href="https://iili.io/Fijeoxf.png">
@@ -27,7 +25,6 @@
                     <a href="#expenses" class="nav-link">Expenses</a>
                     <a href="#experiences" class="nav-link">Experience Log</a>
                     <a href="#weekly-fees" class="nav-link">Weekly Fees</a>
-                    <a href="#gallery" class="nav-link">Gallery</a>
                     <a href="#dashboard" class="nav-link admin-only hidden">Dashboard</a>
                 </nav>
                 <div class="admin-section">
@@ -79,7 +76,7 @@
                 </div>
             </div>
         </section>
-        
+
         <!-- Dashboard Section -->
         <section id="dashboard" class="section">
             <div class="container">
@@ -274,34 +271,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- Gallery Section -->
-        <section id="gallery" class="section">
-            <div class="container">
-                <div class="section-header">
-                    <h3>Photo Gallery</h3>
-                    <button class="btn btn--primary hidden admin-only" id="addGalleryItemBtn">Add Photo</button>
-                </div>
-                
-                <div class="gallery-grid" id="galleryGrid">
-                    <!-- Gallery items will be populated by JavaScript -->
-                </div>
-            </div>
-        </section>
-        
-        <!-- Hero Slider Manager Section (Admin Only) -->
-        <section id="hero-slider-manager" class="section admin-only hidden">
-            <div class="container">
-                <div class="section-header">
-                    <h3>Hero Slider Manager</h3>
-                </div>
-                
-                <div class="hero-slider-manager-grid" id="heroSliderManagerGrid">
-                    <!-- Hero slider manager will be populated by JavaScript -->
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <!-- Admin Login Modal -->
@@ -508,38 +477,6 @@
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn--outline" id="cancelExperienceBtn">Cancel</button>
-                    <button type="submit" class="btn btn--primary">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Gallery Item Form Modal -->
-    <div class="modal hidden" id="galleryModal">
-        <div class="modal-content">
-            <h3 id="galleryModalTitle">Add Photo</h3>
-            <form id="galleryForm">
-                <div class="form-group">
-                    <label class="form-label">Title</label>
-                    <input type="text" class="form-control" id="galleryTitle" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-control" id="galleryDescription" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Image URL</label>
-                    <input type="url" class="form-control" id="galleryImageUrl" placeholder="e.g., /public/images/sample1.svg or https://example.com/image.jpg" required>
-                    <small class="form-text">For local images, use paths like /public/images/sample1.svg</small>
-                </div>
-                <div class="form-group admin-only">
-                    <label class="form-check">
-                        <input type="checkbox" class="form-check-input" id="galleryShowInHeroSlider">
-                        <span class="form-check-label">Show in Hero Slider</span>
-                    </label>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn--outline" id="cancelGalleryBtn">Cancel</button>
                     <button type="submit" class="btn btn--primary">Save</button>
                 </div>
             </form>
