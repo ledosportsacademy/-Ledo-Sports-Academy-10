@@ -16,6 +16,7 @@ const donationRoutes = require('./routes/donationRoutes');
 const experienceRoutes = require('./routes/experienceRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const weeklyFeeRoutes = require('./routes/weeklyFeeRoutes');
+const galleryRoutes = require('./routes/galleryRoutes');
 
 // Create Express app
 const app = express();
@@ -24,6 +25,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // MongoDB Connection
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -44,6 +46,7 @@ app.use('/api/donations', donationRoutes);
 app.use('/api/experiences', experienceRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/weekly-fees', weeklyFeeRoutes);
+app.use('/api/gallery', galleryRoutes);
 
 // Serve the frontend
 app.get('*', (req, res) => {

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#7e22ce"/>
+  <text x="400" y="300" font-family="Arial" font-size="48" fill="white" text-anchor="middle" dominant-baseline="middle">Ledo Sports Academy</text>
+  <text x="400" y="360" font-family="Arial" font-size="24" fill="white" text-anchor="middle" dominant-baseline="middle">Sample Image 3</text>
+  <polygon points="400,120 480,240 320,240" fill="#f59e0b"/>
+</svg>

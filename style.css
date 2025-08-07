@@ -533,6 +533,13 @@ select.form-control {
   margin-bottom: var(--space-16);
 }
 
+.form-text {
+  display: block;
+  margin-top: var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
 /* Card component */
 .card {
   background-color: var(--color-surface);
@@ -1670,6 +1677,8 @@ body {
     opacity: 0;
   }
 }
+
+
 
 /* Responsive Design */
 @media (max-width: 768px) {

@@ -1,0 +1,100 @@
+/* Hero Slider Manager Styles */
+.hero-slider-manager-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-24);
+  margin-bottom: var(--space-32);
+}
+
+.hero-slide-item {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-card-border);
+  overflow: hidden;
+  transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.hero-slide-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.hero-slide-preview {
+  width: 100%;
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.hero-slide-content {
+  padding: var(--space-16);
+}
+
+.hero-slide-content h4 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--club-dark-blue);
+  margin-bottom: var(--space-8);
+}
+
+.hero-slide-content p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin-bottom: var(--space-8);
+}
+
+.hero-slide-content small {
+  display: block;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+  margin-bottom: var(--space-12);
+}
+
+.hero-slide-cta {
+  background: var(--color-bg-1);
+  border-radius: var(--radius-base);
+  padding: var(--space-8) var(--space-12);
+  margin-top: var(--space-8);
+  font-size: var(--font-size-xs);
+}
+
+.hero-slide-cta .cta-label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--club-dark-blue);
+  margin-right: var(--space-8);
+}
+
+.hero-slide-cta .cta-link {
+  color: var(--club-light-blue);
+  word-break: break-all;
+}
+
+.hero-slide-actions {
+  display: flex;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-16);
+  border-top: 1px solid var(--color-card-border);
+  background: var(--color-bg-1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero-slider-manager-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-slider-manager-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .hero-slide-preview {
+    height: 160px;
+  }
+}
