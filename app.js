@@ -2319,8 +2319,16 @@ function deleteExperience(id) {
 function togglePaymentStatus(memberId, paymentDate) {
   if (!isAdminMode) return;
   
+  // Ensure memberId is a number
+  memberId = parseInt(memberId);
+  
+  console.log('Toggle payment status for member:', memberId, 'payment date:', paymentDate);
+  
   const feeRecord = appData.weeklyFees.find(function(f) { return f.memberId === memberId; });
-  if (!feeRecord) return;
+  if (!feeRecord) {
+    console.log('Fee record not found for member:', memberId);
+    return;
+  }
   
   // Find the payment and its index
   let paymentIndex = -1;
@@ -2332,7 +2340,12 @@ function togglePaymentStatus(memberId, paymentDate) {
     return false;
   });
   
-  if (!payment || paymentIndex === -1) return;
+  if (!payment || paymentIndex === -1) {
+    console.log('Payment not found for date:', paymentDate);
+    return;
+  }
+  
+  console.log('Found payment at index:', paymentIndex, 'current status:', payment.status);
   
   // Cycle through statuses: pending -> paid -> overdue -> pending
   let newStatus;
@@ -2352,18 +2365,38 @@ function togglePaymentStatus(memberId, paymentDate) {
     status: newStatus
   };
   
+  // Ensure paymentIndex is a number
+  paymentIndex = parseInt(paymentIndex);
+  
   // Update via API - using the correct endpoint structure
-  fetch(`http://localhost:3000/api/weekly-fees/member/${memberId}/payment/${paymentIndex}`, {
+  const apiUrl = `http://localhost:3000/api/weekly-fees/member/${memberId}/payment/${paymentIndex}`;
+  console.log('API URL:', apiUrl);
+  console.log('Request data:', JSON.stringify(updateData));
+  
+  fetch(apiUrl, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(updateData)
   })
-  .then(response => {
+  .then(async response => {
+    console.log('Response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error('Failed to update payment status');
+      // Try to get the error message from the response
+      let errorMessage = `Status: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage += ` - ${errorData.message || JSON.stringify(errorData)}`;
+      } catch (e) {
+        // If we can't parse the JSON, just use the status text
+        errorMessage += ` - ${response.statusText}`;
+      }
+      
+      throw new Error(`Failed to update payment status: ${errorMessage}`);
     }
+    
     return response.json();
   })
   .then(updatedFee => {
@@ -2380,6 +2413,7 @@ function togglePaymentStatus(memberId, paymentDate) {
   })
   .catch(error => {
     console.error('Error updating payment status:', error);
+    console.error('Error details:', error.stack);
     showMessage('Failed to update payment status: ' + error.message, 'error');
     
     // Revert local change if API call fails
